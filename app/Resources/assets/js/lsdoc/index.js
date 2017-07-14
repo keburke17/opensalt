@@ -558,5 +558,32 @@ $(document).on('ready', function(){
     /* Framework Updater */
     UpdateFramework.init();
     /**********/
+
+    $('#comments-container').comments({
+        profilePictureUrl: '',
+        enableAttachments: true,
+        getComments: function(success, error) {
+            var commentsArray = [{
+                id: 1,
+                created: '2017-07-12',
+                content: 'A comment',
+                fullname: 'Jorge Mejía - Koombea - jorge.mejia@koombea.com',
+                upvote_count: 1,
+                user_has_upvoted: false
+            }];
+            success(commentsArray);
+        },
+        postComment: function(commentJSON, success, error) {
+            $.ajax({
+                type: 'post',
+                url: '/app_dev.php/comments/create',
+                data: commentJSON,
+                success: function(comment) {
+                    success(comment);
+                },
+                error: error
+            });
+        }
+    });
 });
 
