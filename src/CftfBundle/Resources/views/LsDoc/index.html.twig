@@ -31,12 +31,10 @@
                 {% endfor %}
                 </ul>
     </div>
-    <div id="comments-container"></div>
     {% include 'CftfBundle:LsDoc:wizard.html.twig' %}
 {% endblock %}
 
 {% block javascripts %}
-<script src="{{ asset('js/jquery-comments.min.js') }}"></script>
 <script>
     $('#competencyTree').fancytree({
         activate: function(event, data){

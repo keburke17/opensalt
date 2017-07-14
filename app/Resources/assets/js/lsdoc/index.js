@@ -545,6 +545,53 @@ function listRepositories(){
     $('#back').html('');
 }
 
+var CommentSystem = (function(){
+    var lsDocId = $('.js-comments-container').data('lsdocid');
+    console.info(lsDocId);
+    function init(){
+        $('.js-comments-container').comments({
+            profilePictureUrl: '',
+            enableAttachments: true,
+            getComments: function(success, error) {
+                $.get('/app_dev.php/api/comments', {itemId: lsDocId}, function(data){
+                    success(data);
+                });
+            },
+            postComment: function(commentJSON, success, error) {
+                $.ajax({
+                    type: 'post',
+                    url: '/app_dev.php/api/comments/create',
+                    data: appendLSDocIdAsItemId(commentJSON),
+                    success: function(comment) {
+                        success(comment);
+                    },
+                    error: error
+                });
+            },
+            putComment: function(commentJSON, success, error) {
+                $.ajax({
+                    type: 'put',
+                    url: '/api/comments/' + commentJSON.id,
+                    data: appendLSDocIdAsItemId(commentJSON),
+                    success: function(comment) {
+                        success(comment)
+                    },
+                    error: error
+                });
+            }
+        });
+    }
+
+    function appendLSDocIdAsItemId(data){
+        data.itemId = lsDocId;
+        return data;
+    }
+
+    return {
+        init: init
+    }
+})();
+
 $(document).on('ready', function(){
     $('.github-tab').click(function(){
         SaltGithub.getRepoList(1, 30);
@@ -555,35 +602,7 @@ $(document).on('ready', function(){
         Import.fromAsn();
     });
 
-    /* Framework Updater */
     UpdateFramework.init();
-    /**********/
+    CommentSystem.init();
 
-    $('#comments-container').comments({
-        profilePictureUrl: '',
-        enableAttachments: true,
-        getComments: function(success, error) {
-            var commentsArray = [{
-                id: 1,
-                created: '2017-07-12',
-                content: 'A comment',
-                fullname: 'Jorge Mejía - Koombea - jorge.mejia@koombea.com',
-                upvote_count: 1,
-                user_has_upvoted: false
-            }];
-            success(commentsArray);
-        },
-        postComment: function(commentJSON, success, error) {
-            $.ajax({
-                type: 'post',
-                url: '/app_dev.php/comments/create',
-                data: commentJSON,
-                success: function(comment) {
-                    success(comment);
-                },
-                error: error
-            });
-        }
-    });
 });
-
