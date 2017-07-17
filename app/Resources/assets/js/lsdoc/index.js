@@ -547,7 +547,7 @@ function listRepositories(){
 
 var CommentSystem = (function(){
     var lsDocId = $('.js-comments-container').data('lsdocid');
-    console.info(lsDocId);
+
     function init(){
         $('.js-comments-container').comments({
             profilePictureUrl: '',
