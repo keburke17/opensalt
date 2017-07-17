@@ -1,8 +1,9 @@
 <?php
 
-namespace CftfBundle\Entity;
+namespace Salt\SiteBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as Serializer;
 
 /**
  * Comment
@@ -13,6 +14,7 @@ use Doctrine\ORM\Mapping as ORM;
 class Comment
 {
     /**
+     * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      * @ORM\Column(type="integer")
      */
@@ -24,7 +26,7 @@ class Comment
     private $commentId;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="string")
      */
     private $parent;
 
@@ -35,6 +37,7 @@ class Comment
 
     /**
      * @ORM\Column(type="integer")
+     * @Serializer\Exclude()
      */
     private $userId;
 
@@ -49,9 +52,9 @@ class Comment
     private $fullname;
 
     /**
-     * @ORM\Column(type="text")
+     * @ORM\Column(type="boolean")
      */
-    private $createdByCurrentUser;
+    private $createdByCurrentUser = false;
 
     /**
      * @ORM\Column(type="integer")
@@ -62,6 +65,18 @@ class Comment
      * @ORM\Column(type="boolean")
      */
     private $userHasUpvoted;
+
+    /**
+     * @ORM\Column(type="datetime")
+     * @Serializer\SerializedName("created")
+     */
+    private $createdAt;
+
+    /**
+     * @ORM\Column(type="datetime")
+     * @Serializer\SerializedName("modified")
+     */
+    private $updatedAt;
 
     /**
      * Set id
@@ -301,5 +316,53 @@ class Comment
     public function getUserHasUpvoted()
     {
         return $this->userHasUpvoted;
+    }
+
+    /**
+     * Set createdAt
+     *
+     * @param \DateTime $createdAt
+     *
+     * @return Comment
+     */
+    public function setCreatedAt($createdAt)
+    {
+        $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    /**
+     * Get createdAt
+     *
+     * @return \DateTime
+     */
+    public function getCreatedAt()
+    {
+        return $this->createdAt;
+    }
+
+    /**
+     * Set updatedAt
+     *
+     * @param \DateTime $updatedAt
+     *
+     * @return Comment
+     */
+    public function setUpdatedAt($updatedAt)
+    {
+        $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    /**
+     * Get updatedAt
+     *
+     * @return \DateTime
+     */
+    public function getUpdatedAt()
+    {
+        return $this->updatedAt;
     }
 }

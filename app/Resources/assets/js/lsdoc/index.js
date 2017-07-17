@@ -553,8 +553,8 @@ var CommentSystem = (function(){
             profilePictureUrl: '',
             enableAttachments: true,
             getComments: function(success, error) {
-                $.get('/app_dev.php/api/comments', {itemId: lsDocId}, function(data){
-                    success(data);
+                $.get('/app_dev.php/comments', {itemId: lsDocId}, function(data){
+                    success(JSON.parse(data));
                 });
             },
             postComment: function(commentJSON, success, error) {
