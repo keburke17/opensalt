@@ -36,32 +36,44 @@ class CommentsController extends Controller
         $em->persist($comment);
         $em->flush();
 
-        return new Response('OK', Response::HTTP_OK);
+        $serializer = $this->get('jms_serializer');
+        $response = $serializer->serialize($comment,'json');
+
+        return new Response($response);
     }
 
     /**
-     * @Route("/comments", name="get_comments")
+     * @Route("/comments/list/{itemId}", name="get_comments")
      * @Method("GET")
      */
-    public function listCommentsAction()
+    public function listCommentsAction($itemId)
     {
         $user = $this->getUser();
         $em = $this->getDoctrine()->getManager();
 
-        $comments = $em->getRepository('SaltSiteBundle:Comment')->findAll();
+        $comments = $em->getRepository('SaltSiteBundle:Comment')->findByItemId($itemId);
         $serializer = $this->get('jms_serializer');
 
         if ($user) {
             foreach ($comments as $comment){
                 if ($comment->getUserId() == $user->getId()){
                     $comment->setCreatedByCurrentUser('true');
-                } else {
-                    $comment->setCreatedByCurrentUser('false');
                 }
             }
         }
 
         $response = $serializer->serialize($comments,'json');
+        return new Response($response);
+    }
+
+    /**
+     * @Route("/comments/{id}")
+     * @Method("GET")
+     */
+    public function getCommentAction(Comment $comment)
+    {
+        $serializer = $this->get('jms_serializer');
+        $response = $serializer->serialize($comment, 'json');
 
         return new Response($response);
     }
