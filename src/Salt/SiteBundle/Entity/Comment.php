@@ -54,7 +54,7 @@ class Comment
     /**
      * @ORM\Column(type="boolean")
      */
-    private $createdByCurrentUser = false;
+    private $createdByCurrentUser = true;
 
     /**
      * @ORM\Column(type="integer")

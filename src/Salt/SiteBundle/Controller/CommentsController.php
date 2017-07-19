@@ -25,7 +25,6 @@ class CommentsController extends Controller
         $comment->setParent($request->request->get('parent'));
         $comment->setUserId($user->getId());
         $comment->setFullname($user->getUsername().' - '.$user->getOrg()->getName());
-        $comment->setCreatedByCurrentUser($request->request->get('created_by_current_user'));
         $comment->setUpvoteCount($request->request->get('upvote_count'));
         $comment->setUserHasUpvoted(false);
         $comment->setItemId($request->request->get('itemId'));
@@ -68,10 +67,16 @@ class CommentsController extends Controller
 
     /**
      * @Route("/comments/{id}")
-     * @Method("GET")
+     * @Method("POST")
      */
-    public function getCommentAction(Comment $comment)
+    public function updateCommentAction(Comment $comment, Request $request)
     {
+        $em = $this->getDoctrine()->getManager();
+
+        $comment->setContent($request->request->get('content'));
+        $em->persist($comment);
+        $em->flush($comment);
+
         $serializer = $this->get('jms_serializer');
         $response = $serializer->serialize($comment, 'json');
 

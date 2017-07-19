@@ -570,11 +570,11 @@ var CommentSystem = (function(){
             },
             putComment: function(commentJSON, success, error) {
                 $.ajax({
-                    type: 'put',
+                    type: 'post',
                     url: '/app_dev.php/comments/' + commentJSON.id,
                     data: appendLSDocIdAsItemId(commentJSON),
                     success: function(comment) {
-                        success(comment)
+                        success(JSON.parse(comment))
                     },
                     error: error
                 });
