@@ -73,6 +73,7 @@ gulp.task('styles', function() {
         //config.bowerDir+'/bootstrap-sass/assets/stylesheets/_bootstrap.scss',
         //config.bowerDir+'/bootstrap/dist/css/bootstrap.css',
         config.vendorDir+'/fortawesome/font-awesome/css/font-awesome.css',
+        config.bowerDir+'/jquery-comments/css/jquery-comments.css',
         // -- all below now loaded from application.scss
         //config.bowerDir+'/fancytree/dist/skin-lion/ui.fancytree.css',
         //config.assetsDir+'/sass/layout.scss',
@@ -86,6 +87,9 @@ gulp.task('scripts', function() {
     app.addScript([
         config.bowerDir+'/html5-boilerplate/dist/js/vendor/modernizr-2.8.3.min.js',
     ], 'modernizr.js');
+    app.addScript([
+        config.bowerDir+'/jquery-comments/js/jquery-comments.min.js',
+    ], 'jquery-comments.min.js');
     app.addScript([
         config.bowerDir+'/html5-boilerplate/dist/js/plugins.js',
         config.bowerDir+'/jquery/dist/jquery.js',
