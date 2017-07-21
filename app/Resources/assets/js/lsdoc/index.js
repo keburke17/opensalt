@@ -546,24 +546,24 @@ function listRepositories(){
 }
 
 var CommentSystem = (function(){
-    var lsDocId = $('.js-comments-container').data('lsdocid');
+    var itemId = $('.js-comments-container').data('lsdocid');
 
     function init(){
         $('.js-comments-container').comments({
             profilePictureUrl: '',
             enableAttachments: true,
             getComments: function(success, error) {
-                $.get('/app_dev.php/comments/list/'+lsDocId, function(data){
-                    success(JSON.parse(data));
+                $.get('/app_dev.php/comments/' + itemId, function(data){
+                    success(data);
                 });
             },
             postComment: function(commentJSON, success, error) {
                 $.ajax({
                     type: 'post',
-                    url: '/app_dev.php/api/comments/create',
+                    url: '/app_dev.php/comments',
                     data: appendLSDocIdAsItemId(commentJSON),
                     success: function(comment) {
-                        success(JSON.parse(comment));
+                        success(comment);
                     },
                     error: error
                 });
@@ -574,8 +574,16 @@ var CommentSystem = (function(){
                     url: '/app_dev.php/comments/' + commentJSON.id,
                     data: appendLSDocIdAsItemId(commentJSON),
                     success: function(comment) {
-                        success(JSON.parse(comment))
+                        success(comment)
                     },
+                    error: error
+                });
+            },
+            deleteComment: function(commentJSON, success, error) {
+                $.ajax({
+                    type: 'post',
+                    url: '/app_dev.php/comments/delete/' + commentJSON.id,
+                    success: success,
                     error: error
                 });
             }
@@ -583,7 +591,7 @@ var CommentSystem = (function(){
     }
 
     function appendLSDocIdAsItemId(data){
-        data.itemId = lsDocId;
+        data.itemId = itemId;
         return data;
     }
 
@@ -604,5 +612,4 @@ $(document).on('ready', function(){
 
     UpdateFramework.init();
     CommentSystem.init();
-
 });

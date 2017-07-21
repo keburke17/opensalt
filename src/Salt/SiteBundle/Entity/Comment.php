@@ -26,7 +26,7 @@ class Comment
     private $commentId;
 
     /**
-     * @ORM\Column(type="string")
+     * @ORM\Column(type="integer", nullable=true)
      */
     private $parent;
 
@@ -54,7 +54,7 @@ class Comment
     /**
      * @ORM\Column(type="boolean")
      */
-    private $createdByCurrentUser = true;
+    private $createdByCurrentUser = false;
 
     /**
      * @ORM\Column(type="integer")
