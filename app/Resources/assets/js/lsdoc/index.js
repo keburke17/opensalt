@@ -546,27 +546,27 @@ function listRepositories(){
 }
 
 var CommentSystem = (function(){
-	var commentItem = {
-		itemId: null,
-		itemType: 'document'
-	};
+    var commentItem = {
+        itemId: null,
+        itemType: 'document'
+    };
 
     function init(nodeRef){
-		setLsDocId(nodeRef);
+	setItem(nodeRef);
         $('.js-comments-container').comments({
             profilePictureUrl: '',
-			enableReplying: true,
             enableAttachments: true,
+            enableUpvoting: false,
             getComments: function(success, error) {
-                $.get('/app_dev.php/comments/list/'+commentItem.itemId, function(data){
-                    success(JSON.parse(data));
+                $.get('/comments/'+commentItem.itemId+'/'+commentItem.itemType, function(data){
+                    success(data);
                 });
             },
             postComment: function(commentJSON, success, error) {
                 $.ajax({
                     type: 'post',
-                    url: '/app_dev.php/comments',
-                    data: appendLSDocIdAsItemId(commentJSON),
+                    url: '/comments',
+                    data: appendItemId(commentJSON),
                     success: function(comment) {
                         success(comment);
                     },
@@ -576,8 +576,8 @@ var CommentSystem = (function(){
             putComment: function(commentJSON, success, error) {
                 $.ajax({
                     type: 'post',
-                    url: '/app_dev.php/comments/' + commentJSON.id,
-                    data: appendLSDocIdAsItemId(commentJSON),
+                    url: '/comments/' + commentJSON.id,
+                    data: appendItemId(commentJSON),
                     success: function(comment) {
                         success(comment)
                     },
@@ -587,7 +587,7 @@ var CommentSystem = (function(){
             deleteComment: function(commentJSON, success, error) {
                 $.ajax({
                     type: 'post',
-                    url: '/app_dev.php/comments/delete/' + commentJSON.id,
+                    url: '/comments/delete/' + commentJSON.id,
                     success: success,
                     error: error
                 });
@@ -595,21 +595,22 @@ var CommentSystem = (function(){
         });
     }
 
-	function setLsDocId(nodeRef){
-		if( nodeRef ){
-			commentItem.itemId = nodeRef.id;
-			commentItem.itemType = nodeRef.nodeType;
-		} else {
-			commentItem.itemId = $('.js-comments-container').data('lsdocid');
-		}
-	}
+    function setItem(nodeRef){
+        console.log('nodeRef:', nodeRef);
+        if( nodeRef ){
+            commentItem.itemId = nodeRef.id;
+            commentItem.itemType = nodeRef.nodeType;
+        } else {
+            commentItem.itemId = $('.js-comments-container').data('lsdocid');
+        }
+    }
 
-    function appendLSDocIdAsItemId(data){
+    function appendItemId(data){
         return $.extend(data, commentItem);
     }
 
     return {
-		init: init
+	init: init
     }
 })();
 

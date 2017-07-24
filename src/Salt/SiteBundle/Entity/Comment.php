@@ -42,9 +42,9 @@ class Comment
     private $userId;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="string")
      */
-    private $itemId;
+    private $item;
 
     /**
      * @ORM\Column(type="string")
@@ -199,27 +199,27 @@ class Comment
     }
 
     /**
-     * Set itemId
+     * Set item
      *
-     * @param integer $itemId
+     * @param integer $item
      *
      * @return Comment
      */
-    public function setItemId($itemId)
+    public function setItem($item)
     {
-        $this->itemId = $itemId;
+        $this->item = $item;
 
         return $this;
     }
 
     /**
-     * Get itemId
+     * Get item
      *
      * @return integer
      */
-    public function getItemId()
+    public function getItem()
     {
-        return $this->itemId;
+        return $this->item;
     }
 
     /**

@@ -22,12 +22,14 @@ class CommentsController extends Controller
 
         $comment->setContent($request->request->get('content'));
         $comment->setCommentId($request->request->get('id'));
-        $comment->setParent($request->request->get('parent'));
+        $comment->setParent(
+            empty($request->request->get('parent'))?0:$request->request->get('parent')
+        );
         $comment->setUserId($user->getId());
         $comment->setFullname($user->getUsername().' - '.$user->getOrg()->getName());
         $comment->setUpvoteCount($request->request->get('upvote_count'));
         $comment->setUserHasUpvoted(false);
-        $comment->setItemId($request->request->get('itemId'));
+        $comment->setItem($request->request->get('itemType').$request->request->get('itemId'));
         $comment->setCreatedAt(new \DateTime($request->request->get('created')));
         $comment->setUpdatedAt(new \DateTime($request->request->get('modified')));
 
@@ -35,27 +37,20 @@ class CommentsController extends Controller
         $em->persist($comment);
         $em->flush();
 
-        $serializer = $this->get('jms_serializer');
-        $data = $serializer->serialize($comment,'json');
-
-        $response = new Response();
-        $response->setContent($data);
-        $response->headers->set('Content-Type', 'Application/json');
-
+        $response = $this->apiResponse($comment);
         return $response;
     }
 
     /**
-     * @Route("/comments/{itemId}", name="get_comments")
+     * @Route("/comments/{itemId}/{itemType}", name="get_comments")
      * @Method("GET")
      */
-    public function indexAction($itemId)
+    public function listAction($itemId, $itemType)
     {
         $user = $this->getUser();
         $em = $this->getDoctrine()->getManager();
 
-        $comments = $em->getRepository('SaltSiteBundle:Comment')->findByItemId($itemId);
-        $serializer = $this->get('jms_serializer');
+        $comments = $em->getRepository('SaltSiteBundle:Comment')->findByItem($itemType.$itemId);
 
         foreach ($comments as $comment){
             if ($comment->getParent() == 0) {
@@ -68,12 +63,7 @@ class CommentsController extends Controller
             }
         }
 
-        $data = $serializer->serialize($comments,'json');
-
-        $response = new Response();
-        $response->setContent($data);
-        $response->headers->set('Content-Type', 'Application/json');
-
+        $response = $this->apiResponse($comments);
         return $response;
     }
 
@@ -89,13 +79,7 @@ class CommentsController extends Controller
         $em->persist($comment);
         $em->flush($comment);
 
-        $serializer = $this->get('jms_serializer');
-        $data = $serializer->serialize($comment, 'json');
-
-        $response = new Response();
-        $response->setContent($data);
-        $response->headers->set('Content-Type', 'Application/json');
-
+        $response = $this->apiResponse($comment);
         return $response;
     }
 
@@ -115,5 +99,20 @@ class CommentsController extends Controller
         $em->flush();
 
         return new Response(200);
+    }
+
+    private function serialize($data)
+    {
+        return $this->get('jms_serializer')
+            ->serialize($data, 'json');
+    }
+
+    private function apiResponse($data, $statusCode = 200)
+    {
+        $json = $this->serialize($data);
+
+        return new Response($json, $statusCode, [
+            'Content-Type' => 'application/json'
+        ]);
     }
 }
