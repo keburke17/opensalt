@@ -546,15 +546,20 @@ function listRepositories(){
 }
 
 var CommentSystem = (function(){
-    var itemId = $('.js-comments-container').data('lsdocid');
+	var commentItem = {
+		itemId: null,
+		itemType: 'document'
+	};
 
-    function init(){
+    function init(nodeRef){
+		setLsDocId(nodeRef);
         $('.js-comments-container').comments({
             profilePictureUrl: '',
+			enableReplying: true,
             enableAttachments: true,
             getComments: function(success, error) {
-                $.get('/app_dev.php/comments/' + itemId, function(data){
-                    success(data);
+                $.get('/app_dev.php/comments/list/'+commentItem.itemId, function(data){
+                    success(JSON.parse(data));
                 });
             },
             postComment: function(commentJSON, success, error) {
@@ -590,13 +595,21 @@ var CommentSystem = (function(){
         });
     }
 
+	function setLsDocId(nodeRef){
+		if( nodeRef ){
+			commentItem.itemId = nodeRef.id;
+			commentItem.itemType = nodeRef.nodeType;
+		} else {
+			commentItem.itemId = $('.js-comments-container').data('lsdocid');
+		}
+	}
+
     function appendLSDocIdAsItemId(data){
-        data.itemId = itemId;
-        return data;
+        return $.extend(data, commentItem);
     }
 
     return {
-        init: init
+		init: init
     }
 })();
 
